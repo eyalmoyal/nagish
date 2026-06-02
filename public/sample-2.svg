@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="150" viewBox="0 0 240 150" role="img" aria-label="Geometric orange and pink mountains">
+  <defs>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fde2c0"/>
+      <stop offset="1" stop-color="#f5b061"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="150" fill="url(#g2)"/>
+  <circle cx="190" cy="42" r="22" fill="#ef6c5a"/>
+  <path d="M0 150 L70 70 L120 120 L170 60 L240 150 Z" fill="#c4506e"/>
+  <path d="M0 150 L55 95 L110 150 Z" fill="#ef6c5a" opacity="0.9"/>
+</svg>

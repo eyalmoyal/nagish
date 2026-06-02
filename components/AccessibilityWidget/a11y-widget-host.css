@@ -1,0 +1,98 @@
+/* ==========================================================================
+   a11y-widget-host.css
+
+   The HOST-PAGE side of the Accessibility Widget.
+
+   The widget itself never styles your content. All it does is toggle classes
+   and one CSS custom property on <html> (document.documentElement):
+
+     - --a11y-font-scale   (custom property, number, e.g. 1.2)
+     - .a11y-high-contrast
+     - .a11y-readable-font
+     - .a11y-highlight-links
+     - .a11y-stop-animations
+
+   THIS stylesheet is what turns those switches into visible effects on your
+   page. Import it once, globally, in the host site (e.g. in your root layout):
+
+       import "@/components/AccessibilityWidget/a11y-widget-host.css";
+
+   Everything is scoped so it only applies when the matching class/var is set,
+   and the widget's own UI (anything inside .a11y-widget-root) is deliberately
+   excluded so toggles never distort the control panel itself.
+
+   This file makes NO claim of legal/standards compliance. It applies the
+   user's chosen display preferences, nothing more.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Font size
+   The widget sets --a11y-font-scale on <html> (clamped 0.8–2.0 by the widget).
+   We scale the root font-size, so anything sized in rem/em scales with it.
+   At scale 1 this is a no-op (100% = the user's browser default).
+   Tip: size your body text in rem to get the most out of this control.
+   -------------------------------------------------------------------------- */
+html {
+  font-size: calc(100% * var(--a11y-font-scale, 1));
+}
+
+/* --------------------------------------------------------------------------
+   2. High contrast (filter-based)
+   Applied per top-level child of <body> rather than to <html>/<body> directly.
+   Reason: a `filter` on an ancestor of the (position: fixed) widget would make
+   that ancestor the containing block and break the widget's fixed positioning.
+   Skipping `.a11y-widget-root` keeps the floating button/panel pinned to the
+   viewport while still boosting contrast across all real page content.
+   -------------------------------------------------------------------------- */
+html.a11y-high-contrast body > *:not(.a11y-widget-root) {
+  filter: contrast(1.2) saturate(1.25);
+}
+
+/* --------------------------------------------------------------------------
+   3. Readable font (dyslexia-friendly, high-legibility sans)
+   Shipped as a system-font stack — no webfont is fetched at runtime.
+   `Atkinson Hyperlegible` / `OpenDyslexic` are used if the user has them
+   installed; otherwise we fall back through widely-available legible sans
+   faces that also cover Hebrew (Arial Hebrew / Arial / Tahoma).
+   The widget's own UI sets its font explicitly, so it is unaffected.
+   -------------------------------------------------------------------------- */
+html.a11y-readable-font body {
+  font-family:
+    "Atkinson Hyperlegible", "OpenDyslexic", "Comic Neue", "Comic Sans MS",
+    "Trebuchet MS", "Segoe UI", "Arial Hebrew", Tahoma, Verdana, Arial,
+    sans-serif !important;
+  letter-spacing: 0.01em;
+  word-spacing: 0.04em;
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------------------
+   4. Highlight links
+   Underline + outline every link in page content. `:not(.a11y-widget-root *)`
+   keeps the statement link inside the widget from being double-decorated.
+   -------------------------------------------------------------------------- */
+html.a11y-highlight-links a:not(.a11y-widget-root *) {
+  text-decoration: underline !important;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 0.08em;
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 1px;
+}
+
+/* --------------------------------------------------------------------------
+   5. Stop animations
+   Site-wide reduced-motion behaviour, on demand. We neutralise CSS animations,
+   transitions and smooth scrolling. The widget subtree is excluded so the
+   control panel stays consistent.
+   -------------------------------------------------------------------------- */
+html.a11y-stop-animations *:not(.a11y-widget-root):not(.a11y-widget-root *),
+html.a11y-stop-animations *:not(.a11y-widget-root):not(.a11y-widget-root *)::before,
+html.a11y-stop-animations *:not(.a11y-widget-root):not(.a11y-widget-root *)::after {
+  animation-duration: 0.001ms !important;
+  animation-delay: 0ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  transition-delay: 0ms !important;
+  scroll-behavior: auto !important;
+}
